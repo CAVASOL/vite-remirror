@@ -9,6 +9,7 @@ const ALL_USERS = [
   { id: "tom", label: "Tom" },
   { id: "jim", label: "Jim" },
   { id: "sol", label: "Sol" },
+  { id: "paul", label: "Paul" },
 ];
 
 // take tags somewhere and restore them to the editor
@@ -26,31 +27,55 @@ const SAMPLE_DOC = {
   ],
 };
 
+// function LoadButton() {
+//   const { setContent } = useRemirrorContext();
+//   const handleClick = useCallback(() => setContent(SAMPLE_DOC), [setContent]);
+
+//   return (
+//     <button
+//       onMouseDown={(event) => event.preventDefault()}
+//       onClick={handleClick}
+//     >
+//       Load
+//     </button>
+//   );
+// }
+
 function LoadButton() {
   const { setContent } = useRemirrorContext();
-  const handleClick = useCallback(() => setContent(SAMPLE_DOC), [setContent]);
 
-  return (
-    <button
-      onMouseDown={(event) => event.preventDefault()}
-      onClick={handleClick}
-    >
-      Load
-    </button>
-  );
+  const handleLoad = () => {
+    const savedData = localStorage.getItem("editorData");
+    const data = savedData ? JSON.parse(savedData) : null;
+    if (data) {
+      setContent(data);
+      alert("Data loaded!");
+    } else {
+      setContent(SAMPLE_DOC);
+      alert("No saved data found!");
+    }
+  };
+
+  return <button onClick={handleLoad}>Load</button>;
 }
 
 function SaveButton() {
   const { getJSON } = useHelpers();
-  const handleClick = useCallback(
-    () => alert(JSON.stringify(getJSON())),
-    [getJSON]
-  );
+  // const handleClick = useCallback(
+  //   () => alert(JSON.stringify(getJSON())),
+  //   [getJSON]
+  // );
+
+  const handleSave = () => {
+    const data = getJSON();
+    localStorage.setItem("editorData", JSON.stringify(data));
+    alert("Data saved!");
+  };
 
   return (
     <button
       onMouseDown={(event) => event.preventDefault()}
-      onClick={handleClick}
+      onClick={handleSave}
     >
       Save
     </button>
